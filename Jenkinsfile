@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 pipeline {
     agent {
         node {
@@ -102,4 +103,4 @@ pipeline {
         }
     }
 }
-```
+
