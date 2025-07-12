@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 pipeline {
     agent {
         node {
@@ -29,8 +28,7 @@ pipeline {
         stage('Test') {
             when {
                 // Run tests only for main or develop branches
-                anyOf {
-                   申  branch 'main'
+                              
                     branch 'develop'
                 }
             }
