@@ -25,17 +25,11 @@ pipeline {
             }
         }
         stage('Test') {
-            when {
-                // Run tests only for main or develop branches
-                              
-                    branch 'develop'
-                }
-            }
-            steps {
-                // Example: Run tests (modify based on your app's test framework)
-                sh 'docker run --rm ${DOCKER_REGISTRY}/${IMAGE_NAME} npm test' // For Node.js app
+
+         steps {
+                sh 'docker run --rm ${DOCKER_REGISTRY}/${IMAGE_NAME} npm test' 
                 
-                            }
+                  }
         }
                 
     }
