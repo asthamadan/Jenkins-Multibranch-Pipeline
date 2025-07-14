@@ -17,7 +17,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from the specific branch
-                git branch: "${env.BRANCH_NAME}", credentialsId: 'github-credentials-id', url: 'https://github.com/your-repo/your-app.git'
+                git branch: "${env.BRANCH_NAME}", credentialsId: 'github-credentials-id', url: 'https://github.com/asthamadan/Jenkins-Multibranch-Pipeline.git'
             }
         }
         stage('Build') {
@@ -36,7 +36,7 @@ pipeline {
             }
             steps {
                 // Example: Run tests (modify based on your app's test framework)
-                sh 'docker ishte run --rm ${DOCKER_REGISTRY}/${IMAGE_NAME} npm test' // For Node.js app
+                sh 'docker run --rm ${DOCKER_REGISTRY}/${IMAGE_NAME} npm test' // For Node.js app
                 
                             }
         }
