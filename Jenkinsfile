@@ -10,8 +10,7 @@ pipeline {
         DOCKER_CREDENTIALS = credentials('docker-credentials-id') // Jenkins credential ID for Docker Hub
         GIT_CREDENTIALS = credentials('github-credentials-id') // Jenkins credential ID for GitHub
         IMAGE_NAME = "myapp:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-        DEPLOY_SERVER = 'your-deploy-server' // Replace with your deployment server IP/hostname
-    }
+        }
     stages {
         stage('Checkout') {
             steps {
@@ -38,55 +37,7 @@ pipeline {
                 
                             }
         }
-        stage('Push to Registry') {
-            when {
-                // Push only for main or develop branches
-                anyOf {
-                    branch 'main'
-                    branch 'develop'
-                }
-            }
-            steps {
-                // Login to Docker registry (e.g., Docker Hub)
-                sh 'echo $DOCKER_CREDENTIALS_PSW | docker login ${DOCKER_REGISTRY} --username $DOCKER_CREDENTIALS_USR --password-stdin'
-                // Push Docker image
-                sh 'docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}'
-            }
-        }
-        stage('Deploy') {
-            when {
-                // Deploy only for main or develop branches
-                anyOf {
-                    branch 'main'
-                    branch 'develop'
-                }
-            }
-            steps {
-                script {
-                    if (env.BRANCH_NAME == 'main') {
-                        // Deploy to production server (example: SSH to server and run Docker container)
-                        sh '''
-                            ssh -o StrictHostKeyChecking=no user@${DEPLOY_SERVER} << 'EOF'
-                            docker pull ${DOCKER_REGISTRY}/${IMAGE_NAME}
-                            docker stop myapp-prod || true
-                            docker rm myapp-prod || true
-                            docker run -d --name myapp-prod -p 80:3000 ${DOCKER_REGISTRY}/${IMAGE_NAME}
-                            EOF
-                        '''
-                    } else if (env.BRANCH_NAME == 'develop') {
-                        // Deploy to staging server
-                        sh '''
-                            ssh -o StrictHostKeyChecking=no user@${DEPLOY_SERVER} << 'EOF'
-                            docker pull ${DOCKER_REGISTRY}/${IMAGE_NAME}
-                            docker stop myapp-staging || true
-                            docker rm myapp-staging || true
-                            docker run -d --name myapp-staging -p 8080:3000 ${DOCKER_REGISTRY}/${IMAGE_NAME}
-                            EOF
-                        '''
-                    }
-                }
-            }
-        }
+                
     }
     post {
         always {
@@ -100,5 +51,5 @@ pipeline {
             echo "Pipeline failed for branch: ${env.BRANCH_NAME}"
         }
     }
-}
+
 
