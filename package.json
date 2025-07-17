@@ -23,13 +23,7 @@
   "devDependencies": {
     "jest": "^30.0.4"
   },
-<<<<<<< HEAD
-=======
-  "scripts": {
-  "Build": "webpack"   
-},
->>>>>>> 3fd7b4d1220493116772800de76ab8f189a31aed
-  "dependencies": {
+   "dependencies": {
     "ansi-escapes": "^4.3.2",
     "ansi-regex": "^6.1.0",
     "ansi-styles": "^4.3.0",
