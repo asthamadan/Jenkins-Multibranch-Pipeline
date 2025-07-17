@@ -23,7 +23,7 @@
     "jest": "^30.0.4"
   },
   "scripts": {
-  "build": "webpack"   
+  "Build": "webpack"   
 },
   "dependencies": {
     "ansi-escapes": "^4.3.2",
