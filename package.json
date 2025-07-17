@@ -22,9 +22,6 @@
   "devDependencies": {
     "jest": "^30.0.4"
   },
-  "scripts": {
-  "build": "webpack"   
-},
   "dependencies": {
     "ansi-escapes": "^4.3.2",
     "ansi-regex": "^6.1.0",
