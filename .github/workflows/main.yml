@@ -16,7 +16,7 @@ jobs:
     - name: Execute test cases
       run: npm test
     - name: Build application
-      run: npm run Build
+      run: npm run build
     - name: Deploy the code
       run: echo "code has been deployed"
         
