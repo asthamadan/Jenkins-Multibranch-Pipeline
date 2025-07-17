@@ -1,8 +1,8 @@
 name : Build Nodejs Application
 on :
  workflow_dispatch:
-  push:
-Jobs:
+ push:
+jobs:
   job1:
    runs-on: self hosted
    steps:
@@ -10,15 +10,15 @@ Jobs:
       uses: actions/checkout@v4 
     - name: Install Nodejs
       uses: actions/setup-node@v4
-        with:
+      with:
           node-version: 18
           cache: 'npm'
     - name: Install dependencies
-        run: npm ci
+      run: npm ci
     - name: Execute test cases
-        run: npm test
+      run: npm test
     - name: Build application
-        run: npm run Build
+      run: npm run Build
     - name: Deploy the code
       run: echo "code has been deployed"
         
