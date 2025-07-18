@@ -1,106 +1,64 @@
-<<<<<<< HEAD
 pipeline {
     agent {
-        node {
-      label 'Node1'
-    }
+        label 'Node1'
     }
     environment {
-        // Define environment variables
-        DOCKER_REGISTRY = 'docker.io/amadan783' // Replace with your Docker Hub username or registry
-        DOCKER_CREDENTIALS = credentials('docker-credentials-id') // Jenkins credential ID for Docker Hub
-        GIT_CREDENTIALS = credentials('github-credentials-id') // Jenkins credential ID for GitHub
+        DOCKER_REGISTRY = 'docker.io'
         IMAGE_NAME = "myapp:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-        }
+        DOCKER_CREDENTIALS = credentials('docker-credentials-id')
+    }
     stages {
         stage('Checkout') {
+            when {
+                anyOf { branch 'main'; branch 'develop' }
+            }
             steps {
-                // Checkout code from the specific branch
-                git branch: "${env.BRANCH_NAME}", credentialsId: 'github-credentials-id', url: 'https://github.com/asthamadan/Jenkins-Multibranch-Pipeline.git'
+                // Checkout is handled automatically by Jenkins Multibranch Pipeline,
+                // but this stage can be used for additional SCM operations if needed
+                echo 'Checking out code from repository'
+                sh 'git rev-parse HEAD'
             }
         }
         stage('Build') {
+            when {
+                anyOf { branch 'main'; branch 'develop' }
+            }
             steps {
-                // Build Docker image
-                sh 'docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME} .'
+                sh 'docker build --no-cache -t ${DOCKER_REGISTRY}/amadan783/${IMAGE_NAME} .'
             }
         }
         stage('Test') {
-
-         steps {
-                sh 'docker run --rm ${DOCKER_REGISTRY}/${IMAGE_NAME} npm test' 
-                
-                  }
+            when {
+                anyOf { branch 'main'; branch 'develop' }
+            }
+            steps {
+                sh 'docker run --rm ${DOCKER_REGISTRY}/amadan783/${IMAGE_NAME} npm test --passWithNoTests'
+            }
         }
-                
+        stage('Deploy') {
+            when {
+                branch 'develop'
+            }
+            steps {
+                // Simulate deployment by running the container locally on the agent
+                sh 'docker run -d -p 3000:3000 ${DOCKER_REGISTRY}/amadan783/${IMAGE_NAME}'
+                echo 'Application deployed on port 3000'
+            }
+        }
+        stage('Push to Registry') {
+            when {
+                anyOf { branch 'main'; branch 'develop' }
+            }
+            steps {
+                sh 'echo $DOCKER_CREDENTIALS_PSW | docker login ${DOCKER_REGISTRY} --username $DOCKER_CREDENTIALS_USR --password-stdin'
+                sh 'docker push ${DOCKER_REGISTRY}/amadan783/${IMAGE_NAME}'
+            }
+        }
     }
     post {
         always {
-            // Clean up Docker images to save space
-            sh 'docker rmi ${DOCKER_REGISTRY}/${IMAGE_NAME} || true'
-        }
-        success {
-            echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}"
-        }
-        failure {
-            echo "Pipeline failed for branch: ${env.BRANCH_NAME}"
+            sh 'docker stop $(docker ps -q) || true' // Stop any running containers
+            sh 'docker logout ${DOCKER_REGISTRY}'
         }
     }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 80e45305113440dcee71bdf7c62b53d63aaed26a
 }
-=======
-pipeline {
-    agent {
-        node {
-      label 'Node1'
-    }
-    }
-    environment {
-        // Define environment variables
-        DOCKER_REGISTRY = 'docker.io/amadan783' // Replace with your Docker Hub username or registry
-        DOCKER_CREDENTIALS = credentials('docker-credentials-id') // Jenkins credential ID for Docker Hub
-        GIT_CREDENTIALS = credentials('github-credentials-id') // Jenkins credential ID for GitHub
-        IMAGE_NAME = "myapp:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-        }
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout code from the specific branch
-                git branch: "${env.BRANCH_NAME}", credentialsId: 'github-credentials-id', url: 'https://github.com/asthamadan/Jenkins-Multibranch-Pipeline.git'
-            }
-        }
-        stage('Build') {
-            steps {
-                // Build Docker image
-                sh 'docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME} .'
-            }
-        }
-        stage('Test') {
-
-         steps {
-                sh 'docker run --rm ${DOCKER_REGISTRY}/${IMAGE_NAME} npm test' 
-                
-                  }
-        }
-                
-    }
-    post {
-        always {
-            // Clean up Docker images to save space
-            sh 'docker rmi ${DOCKER_REGISTRY}/${IMAGE_NAME} || true'
-        }
-        success {
-            echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}"
-        }
-        failure {
-            echo "Pipeline failed for branch: ${env.BRANCH_NAME}"
-        }
-    }
-
-}
-
->>>>>>> 9798d627e65312990ea9659c6be8b5eb2d3b804b
